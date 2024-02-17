@@ -39,3 +39,29 @@ impl Memory for RamMemory {
         Ok(())
     }
 }
+
+
+
+
+#[cfg(test)]
+mod tests{
+    use crate::emu::mem::RamMemory;
+    use crate::emu::mmu::Memory;
+    const EXAMPLE_ADDRESS:u32=0x24;
+
+    #[test]
+    pub fn get_mem(){
+        let ram_result = RamMemory::try_new();
+        assert!(ram_result.is_ok())
+    }
+    #[test]
+    pub fn get_set_memory(){
+        const EXAMPLE_DATA:u8 = 0xa5;
+        let mut ram = RamMemory::try_new().unwrap();
+        let byte_before = ram.try_get_byte(EXAMPLE_ADDRESS).unwrap();
+        ram.try_set_byte(EXAMPLE_ADDRESS, EXAMPLE_DATA).unwrap();
+        let byte_after = ram.try_get_byte(EXAMPLE_ADDRESS).unwrap();
+        assert_eq!(0,byte_before);
+        assert_eq!(EXAMPLE_DATA,byte_after);
+    }
+}
