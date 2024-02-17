@@ -13,6 +13,7 @@ pub enum DeviceType {
 pub enum EmulatorError {
     AllocationError(DeviceType, &'static str),
     UnreachableMemoryError(DeviceType, u32),
+    InvalidColorError(u8)
 }
 
 
