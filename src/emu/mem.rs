@@ -1,4 +1,8 @@
+use std::ops::Index;
 use crate::emu::mmu::Memory;
+use crate::misc::emulator_error::DeviceType::RAM;
+use crate::misc::emulator_error::EmulatorError;
+use crate::misc::result::EmulatorResult;
 
 const MEM_LENGTH: usize = 2 << 24;
 
@@ -8,21 +12,30 @@ pub struct RamMemory {
 }
 
 impl RamMemory {
-    pub fn new() -> RamMemory {
-        RamMemory {
-            data: vec![0; MEM_LENGTH].into_boxed_slice().try_into().expect("Incorrect ram allocation")
-        }
+    pub fn try_new() -> EmulatorResult<RamMemory> {
+        let alloc_result = vec![0; MEM_LENGTH].into_boxed_slice();
+        let data = alloc_result.try_into().map_err(|err|{
+            EmulatorError::AllocationError(RAM,"Allocation failed")
+        })?;
+        Ok(RamMemory {
+            data
+        })
     }
 }
 
+
 impl Memory for RamMemory {
-    fn get_byte(&self, address: u32) -> u8 {
+    fn try_get_byte(&self, address: u32) -> EmulatorResult<u8> {
         log::trace!("Fetch RAM memory at address {}",address);
-        let x = *self.data.get(address as usize).expect("Unchecked address fetch");
-        x
+        let x = *self.data.get(address as usize).ok_or(EmulatorError::UnreachableMemoryError(RAM,address))?;
+        Ok(x)
     }
 
-    fn set_byte(&mut self, address: u32, val: u8) {
-        self.data[address as usize] = val;
+    fn try_set_byte(&mut self, address: u32, value: u8) -> EmulatorResult<()> {
+        if address>= MEM_LENGTH as u32 {
+            return Err(EmulatorError::UnreachableMemoryError(RAM,address))
+        }
+        self.data[address as usize] = value;
+        Ok(())
     }
 }
