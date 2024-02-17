@@ -2,6 +2,15 @@
 
 This is a play at emulating a BytePusher machine.
 
+
+## Status
+
+- [X] RAM
+- [X] Color
+- [ ] CPU
+- [ ] Keyboard
+- [ ] Display
+
 ## More information about the BytePusher VM
 
 https://esolangs.org/wiki/BytePusher
