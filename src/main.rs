@@ -8,7 +8,7 @@ mod args;
 mod misc;
 
 fn main() {
-    SimpleLogger::new().init().unwrap();
+    SimpleLogger::new().env().init().unwrap();
 
     let mmio = MemoryMappedIO::new();
     let ram = RamMemory::new();
