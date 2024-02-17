@@ -1,8 +1,10 @@
 use crate::emu::iomem::MemoryMappedIO;
 use crate::emu::mem::RamMemory;
 
+// 8 bytes that are memory mapped i/o
 pub const MMAPPEDIO_END: u32 = RAM_MEM_START-1;
 pub const RAM_MEM_START:u32 = 8;
+/// Last index of ram
 pub const RAM_MEM_END: u32 = 2<<24 - 1;
 
 ///

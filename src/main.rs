@@ -5,6 +5,7 @@ use crate::emu::mmu::{Memory, MappedMemory};
 
 mod emu;
 mod args;
+mod misc;
 
 fn main() {
     SimpleLogger::new().init().unwrap();
