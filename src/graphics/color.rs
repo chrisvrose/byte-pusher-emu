@@ -1,6 +1,4 @@
-use byteorder::BigEndian;
 use crate::misc::emulator_error::EmulatorError;
-use crate::misc::endian::MemoryOperations;
 use crate::misc::result::EmulatorResult;
 
 pub struct Color(u8);
