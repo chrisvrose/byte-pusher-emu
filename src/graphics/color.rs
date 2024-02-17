@@ -19,7 +19,7 @@ impl Color {
     }
     pub fn try_new(in_mem_color: u8) -> EmulatorResult<Color> {
         if in_mem_color > Self::COLOR_MAX {
-            return Err(EmulatorError::InvalidColorError(in_mem_color))
+            return Err(EmulatorError::InvalidColor(in_mem_color))
         }
         Ok(Color(in_mem_color))
     }

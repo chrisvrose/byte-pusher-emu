@@ -11,9 +11,9 @@ pub enum DeviceType {
 
 #[derive(Debug)]
 pub enum EmulatorError {
-    AllocationError(DeviceType, &'static str),
-    UnreachableMemoryError(DeviceType, u32),
-    InvalidColorError(u8)
+    AllocationFailure(DeviceType, &'static str),
+    UnreachableMemory(DeviceType, u32),
+    InvalidColor(u8)
 }
 
 

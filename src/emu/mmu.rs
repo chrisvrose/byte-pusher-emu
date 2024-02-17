@@ -2,7 +2,7 @@ use crate::emu::iomem::MemoryMappedIO;
 use crate::emu::mem::RamMemory;
 use crate::misc::emulator_error::DeviceType::MMU;
 
-use crate::misc::emulator_error::EmulatorError::UnreachableMemoryError;
+use crate::misc::emulator_error::EmulatorError::UnreachableMemory;
 use crate::misc::result::EmulatorResult;
 
 // 8 bytes that are memory mapped i/o
@@ -44,7 +44,7 @@ impl Memory for MappedMemory {
             RAM_MEM_START..=RAM_MEM_END => {
                 self.ram_memory.try_get_byte(address)
             }
-            _ => { Err(UnreachableMemoryError(MMU, address)) }
+            _ => { Err(UnreachableMemory(MMU, address)) }
         }?;
 
         Ok(byte_at_addr)
