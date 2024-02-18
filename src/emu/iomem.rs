@@ -1,4 +1,5 @@
 use crate::emu::mmu::Memory;
+use crate::emu::program_counter::ProgramCounter;
 use crate::misc::emulator_error::EmulatorError;
 use crate::misc::endian::{read_big_endian_u16, read_big_endian_u24};
 use crate::misc::result::EmulatorResult;
@@ -7,13 +8,13 @@ use crate::misc::result::EmulatorResult;
 pub struct MemoryMappedIO {
     //FIXME use a keyboard
     keyboard_bytes: [u8; 2],
-    program_counter: [u8; 3],
+    program_counter: ProgramCounter,
     //FIXME use a device
     pixel_reg: u8,
     //FIXME use a device
     audio_sample_address_base: [u8; 2],
 }
-
+/// Represents the memory mapped segment of IO. Aggregates the mapping logic.
 impl MemoryMappedIO {
     // 2 byte keyboard bits
     pub const KEYBOARD_BIT_START: u32 = 0;
@@ -32,10 +33,10 @@ impl MemoryMappedIO {
     pub const AUDIO_SAMPLE_BASE_LEN: u32 = 2;
     const AUDIO_SAMPLE_BASE_END: u32 = Self::AUDIO_SAMPLE_BASE_START + Self::AUDIO_SAMPLE_BASE_LEN - 1;
 
-    pub fn new() -> MemoryMappedIO {
+    pub fn new(program_counter: ProgramCounter) -> MemoryMappedIO {
         MemoryMappedIO {
             keyboard_bytes: [0, 0],
-            program_counter: [0, 0, 0],
+            program_counter,
             pixel_reg: 0,
             audio_sample_address_base: [0, 0],
         }
@@ -53,10 +54,8 @@ impl Memory for MemoryMappedIO {
                 keyboard_byte
             }
             Self::PC_START_ADDR..=Self::PC_END_ADDR => {
-                let pc_index = (address - Self::PC_START_ADDR) as usize;
-                let pc_byte = self.program_counter[pc_index];
-                log::trace!("Fetching PC({}) byte segment {} -> {}",read_big_endian_u24(&self.program_counter),pc_index,pc_byte);
-                pc_byte
+                let pc_index = address - Self::PC_START_ADDR;
+                self.program_counter.try_get_byte(pc_index)?
             }
             Self::PIXEL_BASE => {
                 log::trace!("Fetching pixel base reg {}",self.pixel_reg);
