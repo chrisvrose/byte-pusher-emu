@@ -51,7 +51,16 @@ impl Memory for MappedMemory {
         Ok(byte_at_addr)
     }
     fn try_set_byte(&mut self, address: u32, value: u8) -> EmulatorResult<()> {
-        todo!()
+        match address {
+            0..=MMAPPEDIO_END => {
+                self.memory_mapped_io.try_set_byte(address,value)
+            }
+            RAM_MEM_START..=RAM_MEM_END => {
+                let memory_index = address - RAM_MEM_START;
+                self.ram_memory.try_set_byte(memory_index,value)
+            }
+            _ => { Err(UnreachableMemory(MMU, address)) }
+        }
     }
 }
 
