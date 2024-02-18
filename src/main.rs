@@ -17,16 +17,10 @@ mod graphics;
 
 fn main() -> EmulatorResult<()> {
     SimpleLogger::new().env().init().unwrap();
-    let mut program_counter = ProgramCounter::new();
-    let mut mmio = MemoryMappedIO::new(&mut program_counter);
-    let mut ram = RamMemory::try_new()?;
-    let mut mmu = MappedMemory::new(&mut mmio,&mut ram);
-    // for i in 0..10 {
-    //     log::info!("Memory at {} is {}",i,mmu.try_get_byte(i)?);
-    // }
-    mmu.try_set_byte(0x2,0x1)?;
-    let data = program_counter.try_get_byte(0x0)?;
-    log::info!("Computed data {}",data);
+    let program_counter = ProgramCounter::new();
+    let mmio = MemoryMappedIO::new(&program_counter);
+    let ram = RamMemory::try_new()?;
+    let mmu = MappedMemory::new(&mmio,&ram);
 
 
     // let sdl_context = sdl2::init().unwrap();

@@ -17,17 +17,17 @@ pub trait Memory {
     /// Get the value (24bit) at the address(24bit)
     fn try_get_byte(&self, address: u32) -> EmulatorResult<u8>;
     /// Set the value at the 24bit address
-    fn try_set_byte(&mut self, address: u32, value: u8) -> EmulatorResult<()>;
+    fn try_set_byte(&self, address: u32, value: u8) -> EmulatorResult<()>;
 }
 
 #[derive(Debug)]
 pub struct MappedMemory<'a> {
-    memory_mapped_io: &'a mut MemoryMappedIO<'a>,
-    ram_memory: &'a mut RamMemory,
+    memory_mapped_io: &'a MemoryMappedIO<'a>,
+    ram_memory: &'a RamMemory,
 }
 
 impl <'a> MappedMemory<'a> {
-    pub fn new(memory_mapped_io: &'a mut MemoryMappedIO<'a>, ram_memory:&'a mut RamMemory) -> MappedMemory<'a> {
+    pub fn new(memory_mapped_io: &'a MemoryMappedIO<'a>, ram_memory:&'a RamMemory) -> MappedMemory<'a> {
         MappedMemory {
             memory_mapped_io,
             ram_memory,
@@ -50,7 +50,7 @@ impl <'a> Memory for MappedMemory<'a> {
 
         Ok(byte_at_addr)
     }
-    fn try_set_byte(&mut self, address: u32, value: u8) -> EmulatorResult<()> {
+    fn try_set_byte(&self, address: u32, value: u8) -> EmulatorResult<()> {
         match address {
             0..=MMAPPEDIO_END => {
                 self.memory_mapped_io.try_set_byte(address,value)

@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::ops::Index;
 use crate::emu::mmu::Memory;
 use crate::misc::emulator_error::DeviceType::RAM;
@@ -9,7 +10,7 @@ const MEM_LENGTH: usize = (2 << 24) - (MAPPED_MEMORY_NOT_REQUIRED as usize);
 
 #[derive(Clone, Debug)]
 pub struct RamMemory {
-    data: Box<[u8; MEM_LENGTH]>,
+    data: RefCell<Box<[u8; MEM_LENGTH]>>,
 }
 
 impl RamMemory {
@@ -18,8 +19,9 @@ impl RamMemory {
         let data = alloc_result.try_into().map_err(|err|{
             EmulatorError::AllocationFailure(RAM, "Allocation failed")
         })?;
+        let data_refcell = RefCell::new(data);
         Ok(RamMemory {
-            data
+            data: data_refcell
         })
     }
 }
@@ -28,15 +30,17 @@ impl RamMemory {
 impl Memory for RamMemory {
     fn try_get_byte(&self, address: u32) -> EmulatorResult<u8> {
         log::trace!("Fetch RAM memory at address {}",address);
-        let x = *self.data.get(address as usize).ok_or(EmulatorError::UnreachableMemory(RAM, address))?;
+        let mut data = self.data.borrow_mut();
+        let x = *data.get(address as usize).ok_or(EmulatorError::UnreachableMemory(RAM, address))?;
         Ok(x)
     }
 
-    fn try_set_byte(&mut self, address: u32, value: u8) -> EmulatorResult<()> {
+    fn try_set_byte(&self, address: u32, value: u8) -> EmulatorResult<()> {
         if address>= MEM_LENGTH as u32 {
             return Err(EmulatorError::UnreachableMemory(RAM, address))
         }
-        self.data[address as usize] = value;
+        let mut data = self.data.borrow_mut();
+        data[address as usize] = value;
         Ok(())
     }
 }
