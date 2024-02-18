@@ -13,7 +13,7 @@ This is a play at emulating a BytePusher machine.
     - [ ] Audio sample data
 - [X] Color
 - [ ] CPU
-  - [ ] Inner loop
+  - [X] Inner loop - 65536 instructions
   - [ ] Outer loop
 - [ ] Keyboard
 - [ ] Display adapter
