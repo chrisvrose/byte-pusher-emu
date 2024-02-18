@@ -1,6 +1,7 @@
 use crate::emu::mmu::Memory;
 use crate::emu::program_counter::ProgramCounter;
-use crate::misc::emulator_error::EmulatorError;
+use crate::misc::emulator_error::{DeviceType, EmulatorError};
+use crate::misc::emulator_error::DeviceType::MMU;
 use crate::misc::endian::{read_big_endian_u16, read_big_endian_u24};
 use crate::misc::result::EmulatorResult;
 
@@ -14,6 +15,7 @@ pub struct MemoryMappedIO {
     //FIXME use a device
     audio_sample_address_base: [u8; 2],
 }
+
 /// Represents the memory mapped segment of IO. Aggregates the mapping logic.
 impl MemoryMappedIO {
     // 2 byte keyboard bits
@@ -51,24 +53,45 @@ impl Memory for MemoryMappedIO {
                 let addr_usize = address as usize;
                 let keyboard_byte = self.keyboard_bytes[addr_usize];
                 log::trace!("Fetching keyboard({}) byte segment {} -> {}",read_big_endian_u16(&self.keyboard_bytes),address,keyboard_byte);
-                keyboard_byte
+                Ok(keyboard_byte)
             }
             Self::PC_START_ADDR..=Self::PC_END_ADDR => {
                 let pc_index = address - Self::PC_START_ADDR;
-                self.program_counter.try_get_byte(pc_index)?
+                self.program_counter.try_get_byte(pc_index)
             }
             Self::PIXEL_BASE => {
                 log::trace!("Fetching pixel base reg {}",self.pixel_reg);
-                self.pixel_reg
+                Ok(self.pixel_reg)
             }
-            Self::AUDIO_SAMPLE_BASE_START => self.audio_sample_address_base[0],
-            Self::AUDIO_SAMPLE_BASE_END => self.audio_sample_address_base[1],
-            _ => { panic!("Unreachable code") }
+            Self::AUDIO_SAMPLE_BASE_START => Ok(self.audio_sample_address_base[0]),
+            Self::AUDIO_SAMPLE_BASE_END => Ok(self.audio_sample_address_base[1]),
+            address => {
+                Err(EmulatorError::UnreachableMemory(DeviceType::MMU, address))
+            }
         };
-        Ok(byte)
+        byte
     }
 
-    fn try_set_byte(&mut self, address: u32, val: u8) -> EmulatorResult<()> {
-        todo!()
+    fn try_set_byte(&mut self, address: u32, byte_value: u8) -> EmulatorResult<()> {
+        match address {
+            Self::KEYBOARD_BIT_START..=Self::KEYBOARD_BIT_END => {
+                let addr_usize = address as usize;
+                let keyboard_byte = self.keyboard_bytes[addr_usize];
+                log::trace!("Setting keyboard({}) byte segment {} -> {}",read_big_endian_u16(&self.keyboard_bytes),address,keyboard_byte);
+                self.keyboard_bytes[addr_usize] = byte_value;
+            }
+            Self::PC_START_ADDR..=Self::PC_END_ADDR => {
+                let pc_index = address - Self::PC_START_ADDR;
+                self.program_counter.try_set_byte(pc_index, byte_value)?
+            }
+            Self::PIXEL_BASE => {
+                log::trace!("Fetching pixel base reg {}",self.pixel_reg);
+                self.pixel_reg = byte_value
+            }
+            Self::AUDIO_SAMPLE_BASE_START => { self.audio_sample_address_base[0] = byte_value }
+            Self::AUDIO_SAMPLE_BASE_END => { self.audio_sample_address_base[1] = byte_value }
+            _ => { return Err(EmulatorError::UnreachableMemory(MMU, address)); }
+        };
+        Ok(())
     }
 }
