@@ -4,6 +4,8 @@ use std::fmt::Debug;
 pub enum DeviceType {
     RAM,
     MMU,
+    /// Program counter
+    PC,
     KEYBOARD,
     AUDIO,
     GRAPHICS,
