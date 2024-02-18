@@ -4,7 +4,8 @@ use crate::misc::emulator_error::DeviceType::RAM;
 use crate::misc::emulator_error::EmulatorError;
 use crate::misc::result::EmulatorResult;
 
-const MEM_LENGTH: usize = 2 << 24;
+const MAPPED_MEMORY_NOT_REQUIRED: u8 = 8;
+const MEM_LENGTH: usize = (2 << 24) - (MAPPED_MEMORY_NOT_REQUIRED as usize);
 
 #[derive(Clone, Debug)]
 pub struct RamMemory {
@@ -45,7 +46,7 @@ impl Memory for RamMemory {
 
 #[cfg(test)]
 mod tests{
-    use crate::emu::mem::RamMemory;
+    use crate::emu::ram::RamMemory;
     use crate::emu::mmu::Memory;
     const EXAMPLE_ADDRESS:u32=0x24;
 

@@ -1,4 +1,4 @@
 pub mod cpu;
 pub mod mmu;
-pub mod mem;
+pub mod ram;
 pub mod iomem;

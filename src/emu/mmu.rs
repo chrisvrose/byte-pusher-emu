@@ -1,5 +1,5 @@
 use crate::emu::iomem::MemoryMappedIO;
-use crate::emu::mem::RamMemory;
+use crate::emu::ram::RamMemory;
 use crate::misc::emulator_error::DeviceType::MMU;
 
 use crate::misc::emulator_error::EmulatorError::UnreachableMemory;
@@ -42,7 +42,8 @@ impl Memory for MappedMemory {
                 self.memory_mapped_io.try_get_byte(address)
             }
             RAM_MEM_START..=RAM_MEM_END => {
-                self.ram_memory.try_get_byte(address)
+                let memory_index = address - RAM_MEM_START;
+                self.ram_memory.try_get_byte(memory_index)
             }
             _ => { Err(UnreachableMemory(MMU, address)) }
         }?;

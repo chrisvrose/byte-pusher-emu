@@ -1,6 +1,6 @@
 use simple_logger::SimpleLogger;
 use crate::emu::iomem::MemoryMappedIO;
-use crate::emu::mem::RamMemory;
+use crate::emu::ram::RamMemory;
 use crate::emu::mmu::{Memory, MappedMemory};
 use crate::misc::emulator_error::EmulatorError;
 use crate::misc::result::EmulatorResult;
