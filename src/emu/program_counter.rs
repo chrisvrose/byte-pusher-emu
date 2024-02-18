@@ -5,7 +5,7 @@ use crate::misc::endian::{read_big_endian_u24, write_big_endian_u24};
 use crate::misc::result::EmulatorResult;
 
 
-#[derive(Debug, Default, Copy, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct ProgramCounter {
     /// 24bit location register
     program_counter_register: [u8; 3],
@@ -42,8 +42,11 @@ impl Memory for ProgramCounter {
     }
     /// TODO: Set a byte of PC from the memory.
     fn try_set_byte(&mut self, address: u32, value: u8) -> EmulatorResult<()> {
-        log::error!("Unsupported Method!");
-        todo!()
+        match address {
+            0..=2 => { self.program_counter_register[address as usize] = value }
+            _ => { return Err(EmulatorError::UnreachableMemory(PC, address)); }
+        }
+        Ok(())
     }
 }
 

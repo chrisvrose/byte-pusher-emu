@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum DeviceType {
     RAM,
     MMU,
@@ -11,7 +11,7 @@ pub enum DeviceType {
     GRAPHICS,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum EmulatorError {
     AllocationFailure(DeviceType, &'static str),
     UnreachableMemory(DeviceType, u32),

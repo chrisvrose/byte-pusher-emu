@@ -5,11 +5,11 @@ use crate::misc::emulator_error::DeviceType::MMU;
 use crate::misc::endian::{read_big_endian_u16, read_big_endian_u24};
 use crate::misc::result::EmulatorResult;
 
-#[derive(Debug, Copy, Clone)]
-pub struct MemoryMappedIO {
+#[derive(Debug)]
+pub struct MemoryMappedIO<'a> {
     //FIXME use a keyboard
     keyboard_bytes: [u8; 2],
-    program_counter: ProgramCounter,
+    program_counter: &'a mut ProgramCounter,
     //FIXME use a device
     pixel_reg: u8,
     //FIXME use a device
@@ -17,7 +17,7 @@ pub struct MemoryMappedIO {
 }
 
 /// Represents the memory mapped segment of IO. Aggregates the mapping logic.
-impl MemoryMappedIO {
+impl <'a> MemoryMappedIO<'a> {
     // 2 byte keyboard bits
     pub const KEYBOARD_BIT_START: u32 = 0;
     const KEYBOARD_BIT_END: u32 = 1;
@@ -35,7 +35,7 @@ impl MemoryMappedIO {
     pub const AUDIO_SAMPLE_BASE_LEN: u32 = 2;
     const AUDIO_SAMPLE_BASE_END: u32 = Self::AUDIO_SAMPLE_BASE_START + Self::AUDIO_SAMPLE_BASE_LEN - 1;
 
-    pub fn new(program_counter: ProgramCounter) -> MemoryMappedIO {
+    pub fn new(program_counter: &'a mut ProgramCounter) -> MemoryMappedIO<'a> {
         MemoryMappedIO {
             keyboard_bytes: [0, 0],
             program_counter,
@@ -46,7 +46,7 @@ impl MemoryMappedIO {
 }
 
 
-impl Memory for MemoryMappedIO {
+impl <'a> Memory for MemoryMappedIO<'a> {
     fn try_get_byte(&self, address: u32) -> EmulatorResult<u8> {
         let byte = match address {
             Self::KEYBOARD_BIT_START..=Self::KEYBOARD_BIT_END => {

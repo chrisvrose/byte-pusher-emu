@@ -5,6 +5,7 @@ pub trait GraphicsAdapter{
     fn draw(&mut self,frame_buf:&[u8;DEVICE_FRAMEBUFFER_SIZE])->EmulatorResult<()>;
 }
 
+#[derive(Debug, Clone)]
 pub struct SDLGraphicsAdapter{
     graphics_processor: GraphicsProcessor
 }

@@ -1,6 +1,7 @@
 use crate::misc::emulator_error::EmulatorError;
 use crate::misc::result::EmulatorResult;
 
+#[derive(Debug, Copy, Clone)]
 pub struct Color(u8);
 
 const RED_MULT: u8 = 36;
@@ -8,7 +9,7 @@ const GREEN_MULT: u8 = 6;
 
 impl Color {
     /// Only first 216 color indices are used.
-    const COLOR_MAX:u8 = 215;
+    const COLOR_MAX: u8 = 215;
     const COLOR_FACTOR_8_BIT: u8 = 0x33;
     /// This constructs a valid color from rgb triplet
     pub fn from_rgb(red: u8, green: u8, blue: u8) -> Color {
@@ -19,7 +20,7 @@ impl Color {
     }
     pub fn try_new(in_mem_color: u8) -> EmulatorResult<Color> {
         if in_mem_color > Self::COLOR_MAX {
-            return Err(EmulatorError::InvalidColor(in_mem_color))
+            return Err(EmulatorError::InvalidColor(in_mem_color));
         }
         Ok(Color(in_mem_color))
     }
@@ -52,21 +53,22 @@ mod tests {
         let color = Color::try_new(0xff);
         assert!(color.is_err())
     }
+
     #[test]
-    pub fn test_from_mem_max(){
+    pub fn test_from_mem_max() {
         let color = Color::try_new(Color::COLOR_MAX).unwrap();
-        assert_eq!([255u8;3],color.get_rgb())
+        assert_eq!([255u8; 3], color.get_rgb())
     }
 
     #[test]
-    pub fn from_rgb_zero(){
-        let color = Color::from_rgb(0,0,0);
-        assert_eq!(0,color.get_mem_byte())
-    }
-    #[test]
-    pub fn from_rgb_max(){
-        let color = Color::from_rgb(255,255,255);
-        assert_eq!(Color::COLOR_MAX,color.get_mem_byte())
+    pub fn from_rgb_zero() {
+        let color = Color::from_rgb(0, 0, 0);
+        assert_eq!(0, color.get_mem_byte())
     }
 
+    #[test]
+    pub fn from_rgb_max() {
+        let color = Color::from_rgb(255, 255, 255);
+        assert_eq!(Color::COLOR_MAX, color.get_mem_byte())
+    }
 }

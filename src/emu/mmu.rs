@@ -20,14 +20,14 @@ pub trait Memory {
     fn try_set_byte(&mut self, address: u32, value: u8) -> EmulatorResult<()>;
 }
 
-#[derive(Debug, Clone)]
-pub struct MappedMemory {
-    memory_mapped_io: MemoryMappedIO,
-    ram_memory: RamMemory,
+#[derive(Debug)]
+pub struct MappedMemory<'a> {
+    memory_mapped_io: &'a mut MemoryMappedIO<'a>,
+    ram_memory: &'a mut RamMemory,
 }
 
-impl MappedMemory {
-    pub fn new(memory_mapped_io: MemoryMappedIO, ram_memory: RamMemory) -> MappedMemory {
+impl <'a> MappedMemory<'a> {
+    pub fn new(memory_mapped_io: &'a mut MemoryMappedIO<'a>, ram_memory:&'a mut RamMemory) -> MappedMemory<'a> {
         MappedMemory {
             memory_mapped_io,
             ram_memory,
@@ -35,7 +35,7 @@ impl MappedMemory {
     }
 }
 
-impl Memory for MappedMemory {
+impl <'a> Memory for MappedMemory<'a> {
     fn try_get_byte(&self, address: u32) -> EmulatorResult<u8> {
         let byte_at_addr = match address {
             0..=MMAPPEDIO_END => {

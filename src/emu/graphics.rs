@@ -4,6 +4,7 @@ use crate::misc::result::EmulatorResult;
 
 pub const DEVICE_FRAMEBUFFER_SIZE: usize = 256 * 256;
 
+#[derive(Debug, Clone)]
 pub struct GraphicsProcessor {
     framebuffer: Box<[u8; DEVICE_FRAMEBUFFER_SIZE]>,
 }
@@ -20,10 +21,10 @@ impl GraphicsProcessor {
             framebuffer
         })
     }
-    pub fn set_framebuffer(&mut self,memory_slice: &[u8]){
+    pub fn set_framebuffer(&mut self, memory_slice: &[u8]) {
         self.framebuffer.copy_from_slice(memory_slice);
     }
-    pub fn get_framebuffer(&self) -> &[u8;DEVICE_FRAMEBUFFER_SIZE] {
+    pub fn get_framebuffer(&self) -> &[u8; DEVICE_FRAMEBUFFER_SIZE] {
         &self.framebuffer
     }
 }

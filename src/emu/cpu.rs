@@ -8,12 +8,12 @@ pub enum CpuState{
 }
 
 #[derive(Debug)]
-pub struct Cpu{
-    mapped_memory: MappedMemory,
+pub struct Cpu<'a>{
+    mapped_memory:&'a mut MappedMemory<'a>,
 }
 
-impl Cpu{
-    pub fn new(mapped_memory: MappedMemory)->Cpu{
+impl <'a> Cpu<'a>{
+    pub fn new(mapped_memory: &'a mut MappedMemory<'a>)->Cpu<'a>{
         Cpu{
             mapped_memory
         }
