@@ -14,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: daaku/gh-action-apt-install@92eea4f84f90c895b544aaec6ae21839127c84e5
+      with:
+        packages: libsdl2-dev
     - uses: actions/checkout@v3
     - name: Build
       run: cargo build --verbose
