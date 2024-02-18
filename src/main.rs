@@ -2,7 +2,8 @@ use simple_logger::SimpleLogger;
 use crate::emu::iomem::MemoryMappedIO;
 use crate::emu::ram::RamMemory;
 use crate::emu::mmu::{Memory, MappedMemory};
-use crate::misc::emulator_error::EmulatorError;
+use crate::emu::program_counter::ProgramCounter;
+
 use crate::misc::result::EmulatorResult;
 
 mod emu;
@@ -12,8 +13,8 @@ mod graphics;
 
 fn main() -> EmulatorResult<()> {
     SimpleLogger::new().env().init().unwrap();
-
-    let mmio = MemoryMappedIO::new();
+    let program_counter = ProgramCounter::new();
+    let mmio = MemoryMappedIO::new(program_counter);
     let ram = RamMemory::try_new()?;
     let mmu = MappedMemory::new(mmio, ram);
     for i in 0..10 {

@@ -2,4 +2,4 @@ pub mod cpu;
 pub mod mmu;
 pub mod ram;
 pub mod iomem;
-mod program_counter;
+pub mod program_counter;
