@@ -3,6 +3,7 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use simple_logger::SimpleLogger;
+use crate::emu::cpu::Cpu;
 use crate::emu::iomem::MemoryMappedIO;
 use crate::emu::ram::RamMemory;
 use crate::emu::mmu::{Memory, MappedMemory};
@@ -22,6 +23,10 @@ fn main() -> EmulatorResult<()> {
     let ram = RamMemory::try_new()?;
     let mmu = MappedMemory::new(&mmio,&ram);
 
+    let mut cpu = Cpu::new(&mmu,&program_counter);
+    for i in 0..1{
+        cpu.cycle();
+    }
 
     // let sdl_context = sdl2::init().unwrap();
     // let video_subsystem = sdl_context.video().unwrap();

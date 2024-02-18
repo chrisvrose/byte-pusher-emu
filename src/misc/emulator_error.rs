@@ -2,6 +2,7 @@ use std::fmt::Debug;
 
 #[derive(Debug, Copy, Clone)]
 pub enum DeviceType {
+    CPU,
     RAM,
     MMU,
     /// Program counter
