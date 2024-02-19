@@ -1,7 +1,10 @@
+use std::cell::Ref;
 use std::fmt::{Debug, Formatter};
+use std::mem::size_of;
+use sdl2::pixels::PixelFormatEnum;
 use sdl2::rect::Rect;
-use sdl2::render::WindowCanvas;
-use crate::emu::graphics::GraphicsProcessor;
+use sdl2::render::{TextureAccess, WindowCanvas};
+use crate::emu::graphics::{DEVICE_FRAMEBUFFER_SIZE, GraphicsProcessor};
 use crate::graphics::color::Color;
 use crate::misc::error::EmulatorError;
 use crate::misc::result::EmulatorResult;
@@ -9,6 +12,7 @@ use crate::misc::result::EmulatorResult;
 
 #[derive(Clone)]
 pub struct SDLGraphicsAdapter<'a> {
+    color_fb: Box<[u8; DEVICE_FRAMEBUFFER_SIZE * 3]>,
     graphics_processor: &'a GraphicsProcessor<'a>,
 }
 
@@ -20,33 +24,36 @@ impl<'a> Debug for SDLGraphicsAdapter<'a> {
 
 impl<'a> SDLGraphicsAdapter<'a> {
     pub fn new(graphics_processor: &'a GraphicsProcessor) -> SDLGraphicsAdapter<'a> {
+        let color_fb_vec = vec![0u8; DEVICE_FRAMEBUFFER_SIZE * 3].into_boxed_slice().try_into().expect("???");
         SDLGraphicsAdapter {
-            graphics_processor
+            color_fb: color_fb_vec,
+            graphics_processor,
         }
     }
-    pub fn draw(&self, canvas: &mut WindowCanvas, draw_factor: u32) -> EmulatorResult<()> {
+    pub fn draw(&mut self, canvas: &mut WindowCanvas) -> EmulatorResult<()> {
         let fb = self.graphics_processor.get_framebuffer();
+        self.fill_my_texture(fb);
 
-        let xyc = fb.iter().enumerate().map(|(i, e)| {
-            let i = i as u32;
-            let y_coord = (i & 0xff00) >> 8;
-            let x_coord = i & 0x00ff;
-            let color = Color::new(*e);
-            (x_coord, y_coord, color)
-        });
-        for (x, y, c) in xyc {
-            canvas.set_draw_color(c.get_rgb());
-            let coordinates = (x as i32, y as i32);
-            let draw_result = Self::draw_scaled_point(canvas, coordinates, draw_factor);
-            draw_result?;
-        }
+
+        let texture_creator = canvas.texture_creator();
+
+        let mut texture = texture_creator.create_texture(PixelFormatEnum::RGB24, TextureAccess::Streaming, 256, 256).expect("Failed to make texture");
+        texture.with_lock(None, |f, _i| {
+            f.copy_from_slice(self.color_fb.as_ref())
+        }).expect("TODO: panic message");
+        canvas.copy(&texture, None, None).expect("Failed to write texture");
+
         Ok(())
     }
-
-    fn draw_scaled_point(canvas: &mut WindowCanvas, coordinates: (i32, i32), draw_factor: u32) -> Result<(), EmulatorError> {
-        canvas
-            .fill_rect(Rect::new(coordinates.0 * draw_factor as i32, coordinates.1 * draw_factor as i32, draw_factor, draw_factor))
-            .map_err(|str| EmulatorError::OtherError(str))
+    fn fill_my_texture(&mut self, dev_fb_ref: Ref<Box<[u8; DEVICE_FRAMEBUFFER_SIZE]>>) {
+        for (i, e) in dev_fb_ref.iter().enumerate() {
+            let color = Color::new(*e).get_rgb();
+            self.color_fb[3 * i] = color.0;
+            self.color_fb[3 * i + 1] = color.1;
+            self.color_fb[3 * i + 2] = color.2;
+        }
     }
 }
+
+
 

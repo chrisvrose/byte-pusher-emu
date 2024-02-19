@@ -13,6 +13,7 @@ pub trait Memory {
     fn try_get_byte(&self, address: u32) -> EmulatorResult<u8>;
     /// Set the value at the 24bit address
     fn try_set_byte(&self, address: u32, value: u8) -> EmulatorResult<()>;
+    fn try_set_u16(&self, address: u32, value: u16) -> EmulatorResult<()>;
 }
 
 #[derive(Clone, Debug)]
@@ -50,7 +51,8 @@ impl RamMemory {
         Ok(read_big_endian_u24(a.try_into()?))
     }
 
-    pub fn get_block(&self, address: u32, output: &mut [u8]) -> EmulatorResult<()> {
+    /// write a block of memory into an output slice
+    pub fn try_copy_block(&self, address: u32, output: &mut [u8]) -> EmulatorResult<()> {
         let address = address as usize;
         let data = self.data.borrow();
         let data_requested_slice = data.get(address..address + output.len()).ok_or(EmulatorError::UnreachableMemory(RAM, address as u32))?;
@@ -65,17 +67,17 @@ impl RamMemory {
         self.data.borrow_mut()
     }
     /// set keyboard bits
-    pub fn set_keyboard(&self,keyboard_bits: u16) {
+    pub fn set_u16(&self, address: u32, keyboard_bits: u16) {
         let mut keyboard_slice_ref = self.data.borrow_mut();
         let keyboard_slice = keyboard_slice_ref.get_mut(0..2).unwrap();
-        write_big_endian_u16(keyboard_bits,keyboard_slice.try_into().unwrap());
+        write_big_endian_u16(keyboard_bits, keyboard_slice.try_into().unwrap());
     }
 }
 
 impl Memory for RamMemory {
     fn try_get_byte(&self, address: u32) -> EmulatorResult<u8> {
         log::trace!("Fetch RAM memory at address {}",address);
-        let mut data = self.data.borrow_mut();
+        let data = self.data.borrow();
         let x = *data.get(address as usize).ok_or(EmulatorError::UnreachableMemory(RAM, address))?;
         Ok(x)
     }
@@ -86,6 +88,15 @@ impl Memory for RamMemory {
         }
         let mut data = self.data.borrow_mut();
         data[address as usize] = value;
+        Ok(())
+    }
+
+    fn try_set_u16(&self, address: u32, value: u16) -> EmulatorResult<()> {
+        let address = address as usize;
+        let mut data_ref = self.data.borrow_mut();
+        let data = data_ref.get_mut(address..(address + 2)).ok_or(EmulatorError::UnreachableMemory(RAM, address as u32))?;
+
+        write_big_endian_u16(value, data.try_into()?);
         Ok(())
     }
 }

@@ -37,7 +37,7 @@ impl<'a> GraphicsProcessor<'a> {
         let fb_base_register = (self.ram.try_get_byte(5)? as u32) << 16;
         let mut fb = self.frame_buffer.borrow_mut();
 
-        self.ram.get_block(fb_base_register, fb.as_mut())?;
+        self.ram.try_copy_block(fb_base_register, fb.as_mut())?;
         Ok(())
     }
     fn set_framebuffer(&self, memory_slice: &[u8; DEVICE_FRAMEBUFFER_SIZE]) {

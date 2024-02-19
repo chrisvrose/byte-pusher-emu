@@ -48,6 +48,16 @@ impl Color {
         let b = gb_byte_remainder % Self::GREEN_MULT;
         (r * Self::COLOR_FACTOR_8_BIT, g * Self::COLOR_FACTOR_8_BIT, b * Self::COLOR_FACTOR_8_BIT)
     }
+    
+    pub fn to_rgb_555(&self)->u16{
+        let r = (self.0 / Self::RED_MULT) as u16;
+        let gb_byte_remainder = self.0 % Self::RED_MULT;
+        let g = (gb_byte_remainder / Self::GREEN_MULT) as u16;
+        let b = gb_byte_remainder % Self::GREEN_MULT;
+
+        (r*25)<<10 + (g*25)<<5 + b
+    }
+
 }
 
 

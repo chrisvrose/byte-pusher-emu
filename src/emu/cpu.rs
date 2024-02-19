@@ -40,19 +40,20 @@ impl<'a> Cpu<'a> {
     }
 
     pub fn cycle(&self) -> EmulatorResult<()> {
+
+        let mut program_counter = self.get_pc();
         for _i in 0..65536 {
-            let address_to_execute = self.get_pc();
 
             //execute p1
-            self.copy_u24(address_to_execute)?;
+            self.copy_u24(program_counter)?;
             //execute p2
-            let new_pc_location = address_to_execute + 2 * (Self::PC_LEN as u32);
+            let new_pc_location = program_counter + 2 * (Self::PC_LEN as u32);
 
-            let new_pc = self.memory.try_get_u24(new_pc_location)?;
-
-            self.set_pc(new_pc);
+            program_counter = self.memory.try_get_u24(new_pc_location)?;
         }
-        log::debug!("Finished internal loop");
+
+        // self.set_pc(program_counter);
+        log::trace!("Finished internal loop");
         self.graphics_processor.draw()?;
         // TODO send audio
         Ok(())
@@ -65,20 +66,6 @@ impl<'a> Cpu<'a> {
         self.memory.try_set_byte(bloc, self.memory.try_get_byte(aloc)?)
     }
 
-
-    fn fetch_triplet(&self, address: u32) -> EmulatorResult<[u8; 3]> {
-        let first_byte = self.memory.try_get_byte(address)?;
-        let second_byte = self.memory.try_get_byte(address + 1)?;
-        let third_byte = self.memory.try_get_byte(address + 2)?;
-        let num = [first_byte, second_byte, third_byte];
-        Ok(num)
-    }
-    fn set_triplet(&self, address: u32, val: &[u8; 3]) -> EmulatorResult<()> {
-        self.memory.try_set_byte(address, val[0])?;
-        self.memory.try_set_byte(address + 1, val[1])?;
-        self.memory.try_set_byte(address + 2, val[2])?;
-        Ok(())
-    }
 }
 
 
