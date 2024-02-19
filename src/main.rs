@@ -25,7 +25,7 @@ fn main() -> EmulatorResult<()> {
 
     let mut cpu = Cpu::new(&mmu,&program_counter);
     for i in 0..1{
-        cpu.cycle();
+        cpu.cycle()?;
     }
 
     // let sdl_context = sdl2::init().unwrap();

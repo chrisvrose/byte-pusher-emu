@@ -35,9 +35,6 @@ impl GraphicsProcessor {
         let mut fb = self.frame_buffer.borrow_mut();
         fb.copy_from_slice(memory_slice);
     }
-    pub fn get_framebuffer(&self) -> Box<[u8; DEVICE_FRAMEBUFFER_SIZE]> {
-        self.frame_buffer.borrow().clone()
-    }
 }
 
 #[cfg(test)]
