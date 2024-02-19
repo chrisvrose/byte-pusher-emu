@@ -29,10 +29,11 @@ impl Color {
         Ok(Color(in_mem_color))
     }
     /// wrap to black if needed
-    pub fn new(in_mem_color: u8)->Color{
+    pub fn new(in_mem_color: u8) -> Color {
         if in_mem_color > Self::COLOR_MAX {
+            log::trace!("Invalid color {}, using 0", in_mem_color);
             Color(0)
-        }else{
+        } else {
             Color(in_mem_color)
         }
     }
@@ -40,7 +41,7 @@ impl Color {
         self.0
     }
     /// This fetches the rgb triplet
-    pub fn get_rgb(self) -> (u8,u8,u8) {
+    pub fn get_rgb(self) -> (u8, u8, u8) {
         let r = self.0 / Self::RED_MULT;
         let gb_byte_remainder = self.0 % Self::RED_MULT;
         let g = gb_byte_remainder / Self::GREEN_MULT;
@@ -57,7 +58,7 @@ mod tests {
     #[test]
     pub fn test_from_mem_zero() {
         let color = Color::try_new(0).unwrap();
-        assert_eq!((0,0,0), color.get_rgb())
+        assert_eq!((0, 0, 0), color.get_rgb())
     }
 
     #[test]
@@ -69,7 +70,7 @@ mod tests {
     #[test]
     pub fn test_from_mem_max() {
         let color = Color::try_new(Color::COLOR_MAX).unwrap();
-        assert_eq!((255,255,255), color.get_rgb())
+        assert_eq!((255, 255, 255), color.get_rgb())
     }
 
     #[test]

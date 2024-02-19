@@ -39,7 +39,8 @@ fn main() -> EmulatorResult<()> {
                 Event::Quit { .. } |
                 Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     break 'running;
-                }
+                },
+
                 event => {
                     log::trace!("Received window event {:?}",event);
                 }
