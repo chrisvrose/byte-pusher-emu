@@ -1,4 +1,4 @@
-use crate::misc::emulator_error::EmulatorError;
+use crate::misc::error::EmulatorError;
 use crate::misc::result::EmulatorResult;
 
 /// A Color as represented in BytePusher.

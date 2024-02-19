@@ -1,7 +1,7 @@
 use std::cell::{Ref, RefCell, RefMut};
 
-use crate::misc::emulator_error::DeviceType::RAM;
-use crate::misc::emulator_error::EmulatorError;
+use crate::misc::error::DeviceType::RAM;
+use crate::misc::error::EmulatorError;
 use crate::misc::endian::{read_big_endian_u24, write_big_endian_u16};
 use crate::misc::result::EmulatorResult;
 

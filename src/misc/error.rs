@@ -1,7 +1,7 @@
 use std::array::TryFromSliceError;
 use std::fmt::Debug;
 use std::io::Error;
-use crate::misc::emulator_error::EmulatorError::EmulatorIOError;
+use crate::misc::error::EmulatorError::EmulatorIOError;
 
 #[derive(Debug, Copy, Clone)]
 pub enum DeviceType {

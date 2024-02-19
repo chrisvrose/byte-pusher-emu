@@ -3,7 +3,7 @@ use sdl2::rect::Rect;
 use sdl2::render::WindowCanvas;
 use crate::emu::graphics::GraphicsProcessor;
 use crate::graphics::color::Color;
-use crate::misc::emulator_error::EmulatorError;
+use crate::misc::error::EmulatorError;
 use crate::misc::result::EmulatorResult;
 
 

@@ -1,8 +1,8 @@
 use std::cell::{Ref, RefCell};
 use crate::emu::memory::Memory;
 use crate::emu::memory::RamMemory;
-use crate::misc::emulator_error::DeviceType::GRAPHICS;
-use crate::misc::emulator_error::EmulatorError;
+use crate::misc::error::DeviceType::GRAPHICS;
+use crate::misc::error::EmulatorError;
 use crate::misc::result::EmulatorResult;
 
 pub const DEVICE_FRAMEBUFFER_SIZE: usize = 256 * 256;
