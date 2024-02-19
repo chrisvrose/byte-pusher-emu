@@ -1,6 +1,9 @@
 # BytePusher Emulator
 
-This is a play at emulating a BytePusher machine.
+This is a play at emulating a BytePusher machine developed by [Javamannen](https://esolangs.org/wiki/User:Javamannen).
+
+![Screen test](assets/screen_test.png)
+Screenshot program author: [Javamannen](https://esolangs.org/wiki/User:Javamannen)
 
 ## Status
 
