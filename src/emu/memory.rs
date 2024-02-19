@@ -89,21 +89,29 @@ impl Memory for RamMemory {
 
 #[cfg(test)]
 mod tests {
-    use crate::emu::memory::RamMemory;
+    use crate::emu::memory::{MEM_LENGTH, RamMemory};
     use crate::emu::memory::Memory;
 
     const EXAMPLE_ADDRESS: u32 = 0x24;
-
+    fn get_box_data()->Box<[u8; MEM_LENGTH]>{
+        let alloc_result = vec![0u8; MEM_LENGTH].into_boxed_slice();
+        // get box of fixed size
+        let fixed_size_alloc_box: Box<[u8; MEM_LENGTH]> = alloc_result.try_into().unwrap();
+        fixed_size_alloc_box
+    }
     #[test]
     pub fn get_mem() {
-        let ram_result = RamMemory::try_new();
+        let data = get_box_data();
+        let ram_result = RamMemory::try_from(data.as_ref());
         assert!(ram_result.is_ok())
     }
 
     #[test]
     pub fn get_set_memory() {
         const EXAMPLE_DATA: u8 = 0xa5;
-        let mut ram = RamMemory::try_new().unwrap();
+        let data = get_box_data();
+
+        let ram = RamMemory::try_from(data.as_ref()).unwrap();
         let byte_before = ram.try_get_byte(EXAMPLE_ADDRESS).unwrap();
         ram.try_set_byte(EXAMPLE_ADDRESS, EXAMPLE_DATA).unwrap();
         let byte_after = ram.try_get_byte(EXAMPLE_ADDRESS).unwrap();
