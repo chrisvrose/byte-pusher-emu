@@ -1,7 +1,5 @@
 use crate::emu::mmu::{MappedMemory, Memory};
 use crate::emu::program_counter::ProgramCounter;
-use crate::misc::emulator_error::{DeviceType, EmulatorError};
-use crate::misc::emulator_error::DeviceType::{CPU, PC};
 use crate::misc::endian::read_big_endian_u24;
 use crate::misc::result::EmulatorResult;
 

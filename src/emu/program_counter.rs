@@ -1,5 +1,5 @@
 use std::cell::Cell;
-use crate::emu::mmu::{Memory, RAM_MEM_END};
+use crate::emu::mmu::{Memory};
 use crate::misc::emulator_error::DeviceType::PC;
 use crate::misc::emulator_error::EmulatorError;
 use crate::misc::endian::{read_big_endian_u24, write_big_endian_u24};

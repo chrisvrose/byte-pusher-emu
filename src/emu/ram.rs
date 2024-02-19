@@ -1,5 +1,5 @@
 use std::cell::RefCell;
-use std::ops::Index;
+
 use crate::emu::mmu::Memory;
 use crate::misc::emulator_error::DeviceType::RAM;
 use crate::misc::emulator_error::EmulatorError;

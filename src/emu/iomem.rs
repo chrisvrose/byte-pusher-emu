@@ -1,7 +1,7 @@
 use std::cell::Cell;
 use crate::emu::mmu::Memory;
 use crate::emu::program_counter::ProgramCounter;
-use crate::misc::emulator_error::{DeviceType, EmulatorError};
+use crate::misc::emulator_error::{EmulatorError};
 use crate::misc::emulator_error::DeviceType::MMU;
 use crate::misc::endian::{read_big_endian_u16};
 use crate::misc::result::EmulatorResult;
