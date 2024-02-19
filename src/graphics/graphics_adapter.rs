@@ -9,7 +9,7 @@ use crate::misc::result::EmulatorResult;
 
 #[derive(Clone)]
 pub struct SDLGraphicsAdapter<'a> {
-    pub graphics_processor: &'a GraphicsProcessor<'a>,
+    graphics_processor: &'a GraphicsProcessor<'a>,
 }
 
 impl<'a> Debug for SDLGraphicsAdapter<'a> {
@@ -45,7 +45,7 @@ impl<'a> SDLGraphicsAdapter<'a> {
 
     fn draw_scaled_point(canvas: &mut WindowCanvas, coordinates: (i32, i32), draw_factor: u32) -> Result<(), EmulatorError> {
         canvas
-            .fill_rect(Rect::new(coordinates.0*draw_factor as i32, coordinates.1*draw_factor as i32, draw_factor, draw_factor))
+            .fill_rect(Rect::new(coordinates.0 * draw_factor as i32, coordinates.1 * draw_factor as i32, draw_factor, draw_factor))
             .map_err(|str| EmulatorError::OtherError(str))
     }
 }

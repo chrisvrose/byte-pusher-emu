@@ -18,16 +18,16 @@ pub enum EmulatorError {
     UnreachableMemory(DeviceType, u32),
     InvalidColor(u8),
     EmulatorIOError(Error),
-    OtherError(String)
+    OtherError(String),
 }
 
-impl From<TryFromSliceError> for EmulatorError{
-    fn from(value: TryFromSliceError) -> Self {
-        EmulatorError::UnreachableMemory(DeviceType::RAM,0x5a5a)
+impl From<TryFromSliceError> for EmulatorError {
+    fn from(_: TryFromSliceError) -> Self {
+        EmulatorError::UnreachableMemory(DeviceType::RAM, 0x5a5a)
     }
 }
 
-impl From<std::io::Error> for EmulatorError{
+impl From<std::io::Error> for EmulatorError {
     fn from(value: Error) -> Self {
         EmulatorIOError(value)
     }

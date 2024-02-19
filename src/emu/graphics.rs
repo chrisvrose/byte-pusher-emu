@@ -14,7 +14,7 @@ pub struct GraphicsProcessor<'a> {
 }
 
 /// Abstracted graphics processor. Calls `[GraphicsAdapter]` with the associated framebuffer
-impl <'a> GraphicsProcessor<'a> {
+impl<'a> GraphicsProcessor<'a> {
     pub fn try_new(ram_memory: &'a RamMemory) -> EmulatorResult<GraphicsProcessor> {
         let framebuffer = vec![0; DEVICE_FRAMEBUFFER_SIZE].into_boxed_slice()
             .try_into()
@@ -26,11 +26,11 @@ impl <'a> GraphicsProcessor<'a> {
             frame_buffer: RefCell::new(framebuffer),
         })
     }
-    /// take a copy of FB and
-    pub fn draw(&self)->EmulatorResult<()>{
-        self.copy_indicated_pixel_data_block()?;
-        let fb_immut = self.frame_buffer.borrow();
-        Ok(())
+    /// Draw the pixels.
+    /// Since this is a VM, we just copy and store it in a buffer.
+    /// take a copy of FB and store it
+    pub fn draw(&self) -> EmulatorResult<()> {
+        self.copy_indicated_pixel_data_block()
     }
 
     fn copy_indicated_pixel_data_block(&self) -> Result<(), EmulatorError> {
@@ -40,16 +40,14 @@ impl <'a> GraphicsProcessor<'a> {
         self.ram.get_block(fb_base_register, fb.as_mut())?;
         Ok(())
     }
-    fn set_framebuffer(&self, memory_slice: &[u8;DEVICE_FRAMEBUFFER_SIZE]) {
+    fn set_framebuffer(&self, memory_slice: &[u8; DEVICE_FRAMEBUFFER_SIZE]) {
         let mut fb = self.frame_buffer.borrow_mut();
         fb.copy_from_slice(memory_slice);
     }
-    pub fn get_framebuffer(&self)->Ref<Box<[u8; DEVICE_FRAMEBUFFER_SIZE]>>{
+    pub fn get_framebuffer(&self) -> Ref<Box<[u8; DEVICE_FRAMEBUFFER_SIZE]>> {
         self.frame_buffer.borrow()
     }
 }
 
 #[cfg(test)]
-mod test{
-
-}
+mod test {}
