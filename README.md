@@ -2,22 +2,20 @@
 
 This is a play at emulating a BytePusher machine.
 
-
 ## Status
 
-- [ ] MMU
-  - [X] RAM
-  - [ ] Mapped I/O
-    - [X] Program counter
-    - [X] Framebuffer
-    - [ ] Audio sample data
+- [X] Memory
 - [X] Color
-- [ ] CPU
+- [X] CPU
   - [X] Inner loop - 65536 instructions
-  - [ ] Outer loop
+  - [X] Outer loop - 60fps display loop
+- [X] Display adapter
+  - [X] SDL2 adapter
 - [ ] Keyboard
-- [ ] Display adapter
+- [ ] Audio
 - [ ] Load/Save memory
+  - [ ] Load a ROM
+
 ## More information about the BytePusher VM
 
 https://esolangs.org/wiki/BytePusher
