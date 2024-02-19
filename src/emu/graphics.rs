@@ -40,10 +40,6 @@ impl<'a> GraphicsProcessor<'a> {
         self.ram.try_copy_block(fb_base_register, fb.as_mut())?;
         Ok(())
     }
-    fn set_framebuffer(&self, memory_slice: &[u8; DEVICE_FRAMEBUFFER_SIZE]) {
-        let mut fb = self.frame_buffer.borrow_mut();
-        fb.copy_from_slice(memory_slice);
-    }
     pub fn get_framebuffer(&self) -> Ref<Box<[u8; DEVICE_FRAMEBUFFER_SIZE]>> {
         self.frame_buffer.borrow()
     }

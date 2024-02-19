@@ -5,9 +5,7 @@ use crate::misc::error::EmulatorError::EmulatorIOError;
 
 #[derive(Debug, Copy, Clone)]
 pub enum DeviceType {
-    CPU,
     RAM,
-    KEYBOARD,
     AUDIO,
     GRAPHICS,
 }
@@ -16,9 +14,7 @@ pub enum DeviceType {
 pub enum EmulatorError {
     AllocationFailure(DeviceType, &'static str),
     UnreachableMemory(DeviceType, u32),
-    InvalidColor(u8),
     EmulatorIOError(Error),
-    OtherError(String),
 }
 
 impl From<TryFromSliceError> for EmulatorError {

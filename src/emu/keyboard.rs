@@ -17,12 +17,6 @@ impl<'a> Keyboard<'a>{
         }
     }
 
-    pub fn clear_keyboard(&mut self){
-        log::debug!("Keyboard clear");
-        self.bitflags = 0;
-        self.dirty = true;
-    }
-
     pub fn key_down(&mut self,x:u8){
         self.bitflags |= 1<<x;
         log::debug!("Key Down, keyboard state {}",self.bitflags);

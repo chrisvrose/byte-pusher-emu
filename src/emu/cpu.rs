@@ -3,11 +3,6 @@ use crate::emu::memory::{Memory, RamMemory};
 use crate::misc::endian::{read_big_endian_u24, write_big_endian_u24};
 use crate::misc::result::EmulatorResult;
 
-#[derive(Debug)]
-pub enum CpuState {
-    Running,
-    Paused,
-}
 
 #[derive(Debug)]
 pub struct Cpu<'a> {
@@ -18,7 +13,6 @@ pub struct Cpu<'a> {
 impl<'a> Cpu<'a> {
     const PC_START: usize = 2;
     const PC_LEN: usize = 3;
-    const PC_ZERO: [u8; 3] = [0; 3];
     pub fn new(memory: &'a RamMemory, graphics_processor: &'a GraphicsProcessor<'a>) -> Cpu<'a> {
         Cpu {
             graphics_processor,
@@ -29,14 +23,6 @@ impl<'a> Cpu<'a> {
         let memory_slice = self.memory.get_data_ref();
         let data = memory_slice.get(Self::PC_START..(Self::PC_START + Self::PC_LEN)).unwrap();
         read_big_endian_u24(data.try_into().unwrap())
-    }
-    pub fn set_pc(&self, address: u32) {
-        let mut memory_slice = self.memory.get_data_ref_mut();
-
-        let mut pc_big_endian_slice = Self::PC_ZERO;
-        write_big_endian_u24(address, &mut pc_big_endian_slice);
-
-        memory_slice[Self::PC_START..(Self::PC_START + Self::PC_LEN)].copy_from_slice(&pc_big_endian_slice);
     }
 
     pub fn cycle(&self) -> EmulatorResult<()> {
@@ -52,7 +38,6 @@ impl<'a> Cpu<'a> {
             program_counter = self.memory.try_get_u24(new_pc_location)?;
         }
 
-        // self.set_pc(program_counter);
         log::trace!("Finished internal loop");
         self.graphics_processor.draw()?;
         // TODO send audio

@@ -1,12 +1,9 @@
 use std::cell::Ref;
 use std::fmt::{Debug, Formatter};
-use std::mem::size_of;
 use sdl2::pixels::PixelFormatEnum;
-use sdl2::rect::Rect;
 use sdl2::render::{TextureAccess, WindowCanvas};
 use crate::emu::graphics::{DEVICE_FRAMEBUFFER_SIZE, GraphicsProcessor};
 use crate::graphics::color::Color;
-use crate::misc::error::EmulatorError;
 use crate::misc::result::EmulatorResult;
 
 

@@ -1,16 +1,18 @@
 use std::fs::File;
 use std::io::Read;
 use std::time::Duration;
+use clap::Parser;
 use sdl2::event::Event;
 use sdl2::EventPump;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::render::{BlendMode, WindowCanvas};
 use simple_logger::SimpleLogger;
+use crate::args::BytePusherArgs;
 use crate::emu::cpu::Cpu;
 use crate::emu::graphics::GraphicsProcessor;
 use crate::emu::keyboard::Keyboard;
-use crate::emu::memory::{MEM_LENGTH, Memory, RamMemory};
+use crate::emu::memory::{MEM_LENGTH, RamMemory};
 use crate::graphics::graphics_adapter::SDLGraphicsAdapter;
 
 use crate::misc::result::EmulatorResult;
@@ -21,11 +23,14 @@ mod misc;
 mod graphics;
 
 fn main() -> EmulatorResult<()> {
-    let (file_bytes, x) = try_load_rom()?;
-    assert!(x < MEM_LENGTH);
+    let BytePusherArgs { file_name } = BytePusherArgs::parse();
     SimpleLogger::new().env().init().unwrap();
 
-    let (mut canvas, mut event_pump, draw_factor) = initiate_sdl();
+
+    let (file_bytes, x) = try_load_rom(&file_name)?;
+    assert!(x < MEM_LENGTH);
+
+    let (mut canvas, mut event_pump) = initiate_sdl();
 
 
     let ram = RamMemory::try_from(file_bytes.as_slice())?;
@@ -35,9 +40,7 @@ fn main() -> EmulatorResult<()> {
 
     let mut sdl2_graphics_adapter = SDLGraphicsAdapter::new(&graphics_processor);
 
-    let mut i = 0;
     'running: loop {
-        i = (i+1)%255;
         canvas.set_draw_color(Color::BLACK);
         canvas.clear();
         for event in event_pump.poll_iter() {
@@ -46,20 +49,17 @@ fn main() -> EmulatorResult<()> {
                 Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     break 'running;
                 }
-                Event::KeyDown { keycode: Some(x),repeat:false,.. } => {
+                Event::KeyDown { keycode: Some(x), repeat: false, .. } => {
                     if let Some(key_val) = get_key_index(x) {
                         keyboard.key_down(key_val)
                     }
-                },
-                Event::KeyUp { keycode: Some(x), repeat:false, .. } => {
+                }
+                Event::KeyUp { keycode: Some(x), repeat: false, .. } => {
                     if let Some(key_val) = get_key_index(x) {
                         keyboard.key_up(key_val)
                     }
                 }
-
-                event => {
-                    log::trace!("Received window event {:?}",event);
-                }
+                _ => {}
             }
         }
 
@@ -102,16 +102,20 @@ fn get_key_index(p0: Keycode) -> Option<u8> {
     }
 }
 
-fn try_load_rom() -> EmulatorResult<(Vec<u8>, usize)> {
+fn try_load_rom(file_name_option: &Option<String>) -> EmulatorResult<(Vec<u8>, usize)> {
     let mut file_bytes = vec![0u8; MEM_LENGTH];
 
-    let mut file_handle = File::open("roms/Keyboard Test(1).BytePusher")?;
-    let x = file_handle.read(&mut file_bytes)?;
+    let bytes_read = if let Some(file_name) = file_name_option{
+        let mut file_handle = File::open(file_name.as_str())?;
+        file_handle.read(&mut file_bytes)?
+    }else{
+        0
+    };
 
-    Ok((file_bytes, x))
+    Ok((file_bytes, bytes_read))
 }
 
-fn initiate_sdl() -> (WindowCanvas, EventPump, u32) {
+fn initiate_sdl() -> (WindowCanvas, EventPump) {
     const BASE_RESOLUTION: u32 = 256;
     const DRAW_FACTOR: u32 = 4;
     const WINDOW_RESOLUTION: u32 = BASE_RESOLUTION * DRAW_FACTOR;
@@ -127,10 +131,10 @@ fn initiate_sdl() -> (WindowCanvas, EventPump, u32) {
     canvas.set_draw_color(Color::RGB(0x10, 0x10, 0x10));
     canvas.set_integer_scale(true).expect("Setting int scale");
 
-    canvas.set_scale(DRAW_FACTOR as f32,DRAW_FACTOR as f32).expect("Setting scale");
+    canvas.set_scale(DRAW_FACTOR as f32, DRAW_FACTOR as f32).expect("Setting scale");
     canvas.clear();
     canvas.set_blend_mode(BlendMode::None);
     canvas.present();
     let event_pump = sdl_context.event_pump().unwrap();
-    (canvas, event_pump, DRAW_FACTOR)
+    (canvas, event_pump)
 }

@@ -22,16 +22,6 @@ pub struct RamMemory {
 }
 
 impl RamMemory {
-    pub fn try_new() -> EmulatorResult<RamMemory> {
-        let alloc_result = vec![0; MEM_LENGTH].into_boxed_slice();
-        let data = alloc_result.try_into().map_err(|err| {
-            EmulatorError::AllocationFailure(RAM, "Allocation failed")
-        })?;
-        let data_refcell = RefCell::new(data);
-        Ok(RamMemory {
-            data: data_refcell
-        })
-    }
     pub fn try_from(existing_data: &[u8]) -> EmulatorResult<RamMemory> {
         let alloc_result = vec![0u8; MEM_LENGTH].into_boxed_slice();
         // get box of fixed size
@@ -66,17 +56,12 @@ impl RamMemory {
     pub fn get_data_ref_mut(&self) -> RefMut<Box<[u8; MEM_LENGTH]>> {
         self.data.borrow_mut()
     }
-    /// set keyboard bits
-    pub fn set_u16(&self, address: u32, keyboard_bits: u16) {
-        let mut keyboard_slice_ref = self.data.borrow_mut();
-        let keyboard_slice = keyboard_slice_ref.get_mut(0..2).unwrap();
-        write_big_endian_u16(keyboard_bits, keyboard_slice.try_into().unwrap());
-    }
+
 }
 
 impl Memory for RamMemory {
     fn try_get_byte(&self, address: u32) -> EmulatorResult<u8> {
-        log::trace!("Fetch RAM memory at address {}",address);
+        // log::trace!("Fetch RAM memory at address {}",address);
         let data = self.data.borrow();
         let x = *data.get(address as usize).ok_or(EmulatorError::UnreachableMemory(RAM, address))?;
         Ok(x)
