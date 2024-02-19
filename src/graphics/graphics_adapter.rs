@@ -25,17 +25,11 @@ impl <'a> SDLGraphicsAdapter<'a> {
         }
     }
     pub fn draw(&self, canvas:&mut WindowCanvas) -> EmulatorResult<()> {
-        let mut canvas_ref = &canvas;
         let fb = self.graphics_processor.get_framebuffer();
-        for i in 0..fb.len() {
-            let i = i as u32;
-            let y_coord = i&0xff00;
-            let x_coord = i&0x00ff;
 
-        }
         let xyc = fb.iter().enumerate().map(|(i,e)| {
             let i = i as u32;
-            let y_coord = i&0xff00;
+            let y_coord = i&0xff00 >> 8;
             let x_coord = i&0x00ff;
             let color = Color::new(*e);
             (x_coord,y_coord,color)

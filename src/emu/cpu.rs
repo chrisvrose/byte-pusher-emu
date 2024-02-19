@@ -44,10 +44,13 @@ impl <'a> Cpu<'a>{
         for _i in 0..65536{
             let address_to_execute = self.get_pc();
 
-            //fetch
+            //execute p1
             self.copy_u24(address_to_execute)?;
+            //execute p2
             let new_pc_location = address_to_execute+2*(Self::PC_LEN as u32) ;
+
             let new_pc = self.memory.try_get_u24(new_pc_location)?;
+
             self.set_pc(new_pc);
         }
         log::debug!("Finished internal loop");
