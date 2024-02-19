@@ -1,7 +1,6 @@
-use std::cell::Ref;
 use std::fmt::{Debug, Formatter};
-use sdl2::render::{Canvas, WindowCanvas};
-use crate::emu::graphics::{DEVICE_FRAMEBUFFER_SIZE, GraphicsProcessor};
+use sdl2::render::WindowCanvas;
+use crate::emu::graphics::GraphicsProcessor;
 use crate::graphics::color::Color;
 use crate::misc::emulator_error::EmulatorError;
 use crate::misc::result::EmulatorResult;
@@ -29,7 +28,7 @@ impl <'a> SDLGraphicsAdapter<'a> {
 
         let xyc = fb.iter().enumerate().map(|(i,e)| {
             let i = i as u32;
-            let y_coord = i&0xff00 >> 8;
+            let y_coord = (i&0xff00 )>> 8;
             let x_coord = i&0x00ff;
             let color = Color::new(*e);
             (x_coord,y_coord,color)
