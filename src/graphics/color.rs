@@ -4,10 +4,12 @@ use crate::misc::result::EmulatorResult;
 #[derive(Debug, Copy, Clone)]
 pub struct Color(u8);
 
-const RED_MULT: u8 = 36;
-const GREEN_MULT: u8 = 6;
 
 impl Color {
+    /// Red color offset in the colour byte
+    const RED_MULT: u8 = 36;
+    /// green color offset in the colour byte
+    const GREEN_MULT: u8 = 6;
     /// Only first 216 color indices are used.
     const COLOR_MAX: u8 = 215;
     const COLOR_FACTOR_8_BIT: u8 = 0x33;
@@ -16,7 +18,7 @@ impl Color {
         let red = red / Self::COLOR_FACTOR_8_BIT;
         let green = green / Self::COLOR_FACTOR_8_BIT;
         let blue = blue / Self::COLOR_FACTOR_8_BIT;
-        Color(red * RED_MULT + green * GREEN_MULT + blue)
+        Color(red * Self::RED_MULT + green * Self::GREEN_MULT + blue)
     }
     pub fn try_new(in_mem_color: u8) -> EmulatorResult<Color> {
         if in_mem_color > Self::COLOR_MAX {
@@ -29,10 +31,10 @@ impl Color {
     }
     /// This fetches the rgb triplet
     pub fn get_rgb(self) -> [u8; 3] {
-        let r = self.0 / RED_MULT;
-        let gb_byte_remainder = self.0 % RED_MULT;
-        let g = gb_byte_remainder / GREEN_MULT;
-        let b = gb_byte_remainder % GREEN_MULT;
+        let r = self.0 / Self::RED_MULT;
+        let gb_byte_remainder = self.0 % Self::RED_MULT;
+        let g = gb_byte_remainder / Self::GREEN_MULT;
+        let b = gb_byte_remainder % Self::GREEN_MULT;
         [r * Self::COLOR_FACTOR_8_BIT, g * Self::COLOR_FACTOR_8_BIT, b * Self::COLOR_FACTOR_8_BIT]
     }
 }
