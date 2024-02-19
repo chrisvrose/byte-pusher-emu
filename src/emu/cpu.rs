@@ -1,6 +1,5 @@
 use crate::emu::graphics::GraphicsProcessor;
-use crate::emu::mmu::{ Memory};
-use crate::emu::ram::RamMemory;
+use crate::emu::memory::{Memory, RamMemory};
 use crate::misc::endian::{read_big_endian_u24, write_big_endian_u24};
 use crate::misc::result::EmulatorResult;
 

@@ -1,6 +1,6 @@
 use std::cell::{Ref, RefCell};
-use crate::emu::mmu::Memory;
-use crate::emu::ram::RamMemory;
+use crate::emu::memory::Memory;
+use crate::emu::memory::RamMemory;
 use crate::misc::emulator_error::DeviceType::GRAPHICS;
 use crate::misc::emulator_error::EmulatorError;
 use crate::misc::result::EmulatorResult;

@@ -1,4 +1,3 @@
 pub mod cpu;
-pub mod mmu;
-pub mod ram;
+pub mod memory;
 pub mod graphics;

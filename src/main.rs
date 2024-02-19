@@ -9,7 +9,7 @@ use sdl2::render::WindowCanvas;
 use simple_logger::SimpleLogger;
 use crate::emu::cpu::Cpu;
 use crate::emu::graphics::GraphicsProcessor;
-use crate::emu::ram::{MEM_LENGTH, RamMemory};
+use crate::emu::memory::{MEM_LENGTH, RamMemory};
 use crate::graphics::graphics_adapter::SDLGraphicsAdapter;
 
 use crate::misc::result::EmulatorResult;

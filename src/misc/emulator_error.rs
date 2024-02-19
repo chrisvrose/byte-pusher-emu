@@ -7,9 +7,6 @@ use crate::misc::emulator_error::EmulatorError::EmulatorIOError;
 pub enum DeviceType {
     CPU,
     RAM,
-    MMU,
-    /// Program counter
-    PC,
     KEYBOARD,
     AUDIO,
     GRAPHICS,

@@ -1,14 +1,20 @@
 use std::cell::RefCell;
 
-use crate::emu::mmu::Memory;
 use crate::misc::emulator_error::DeviceType::RAM;
 use crate::misc::emulator_error::EmulatorError;
 use crate::misc::endian::read_big_endian_u24;
 use crate::misc::result::EmulatorResult;
 
-const MAPPED_MEMORY_NOT_REQUIRED: u8 = 8;
-
 pub const MEM_LENGTH: usize = 2 << 23;
+
+/// mapped I/O + RAM.
+pub trait Memory {
+    /// Get the value (24bit) at the address(24bit)
+    fn try_get_byte(&self, address: u32) -> EmulatorResult<u8>;
+    /// Set the value at the 24bit address
+    fn try_set_byte(&self, address: u32, value: u8) -> EmulatorResult<()>;
+}
+
 #[derive(Clone, Debug)]
 pub struct RamMemory {
     pub data: RefCell<Box<[u8; MEM_LENGTH]>>,
@@ -54,8 +60,6 @@ impl RamMemory {
 
 
 }
-
-
 impl Memory for RamMemory {
     fn try_get_byte(&self, address: u32) -> EmulatorResult<u8> {
         log::trace!("Fetch RAM memory at address {}",address);
@@ -79,8 +83,8 @@ impl Memory for RamMemory {
 
 #[cfg(test)]
 mod tests{
-    use crate::emu::ram::RamMemory;
-    use crate::emu::mmu::Memory;
+    use crate::emu::memory::RamMemory;
+    use crate::emu::memory::Memory;
     const EXAMPLE_ADDRESS:u32=0x24;
 
     #[test]
@@ -99,3 +103,5 @@ mod tests{
         assert_eq!(EXAMPLE_DATA,byte_after);
     }
 }
+
+
