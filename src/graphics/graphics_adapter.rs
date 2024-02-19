@@ -1,17 +1,17 @@
-use crate::emu::graphics::{DEVICE_FRAMEBUFFER_SIZE, GraphicsProcessor};
+use std::cell::Ref;
+use std::fmt::Debug;
 use crate::misc::result::EmulatorResult;
 
-pub trait GraphicsAdapter{
-    fn draw(&mut self,frame_buf:&[u8;DEVICE_FRAMEBUFFER_SIZE])->EmulatorResult<()>;
+pub trait GraphicsAdapter: Debug {
+    fn draw(&self, frame_buf: Ref<Box<[u8; 65536]>>) -> EmulatorResult<()>;
 }
 
 #[derive(Debug, Clone)]
-pub struct SDLGraphicsAdapter{
-    graphics_processor: GraphicsProcessor
+pub struct SDLGraphicsAdapter {
 }
 
-impl GraphicsAdapter for SDLGraphicsAdapter{
-    fn draw(&mut self, frame_buf: &[u8; DEVICE_FRAMEBUFFER_SIZE]) -> EmulatorResult<()> {
+impl GraphicsAdapter for SDLGraphicsAdapter {
+    fn draw(&self, frame_buffer: Ref<Box<[u8; 65536]>>) -> EmulatorResult<()> {
         todo!()
     }
 }
