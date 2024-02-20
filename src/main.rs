@@ -32,12 +32,12 @@ fn main() -> EmulatorResult<()> {
     let (file_bytes, x) = try_load_rom(&file_name)?;
     assert!(x < MEM_LENGTH);
 
-    let (mut canvas, mut event_pump, mut audio_queue) = initiate_sdl();
+    let (mut canvas, mut event_pump, audio_queue) = initiate_sdl();
 
 
     let ram = RamMemory::try_from(file_bytes.as_slice())?;
     let graphics_processor = GraphicsProcessor::try_new(&ram)?;
-    let mut audio_processor = AudioProcessor::try_new(&ram,&audio_queue)?;
+    let mut audio_processor = AudioProcessor::try_new(&ram, &audio_queue)?;
     let mut keyboard = Keyboard::new(&ram);
     let cpu = Cpu::new(&ram, &graphics_processor);
 
@@ -109,10 +109,10 @@ fn get_key_index(p0: Keycode) -> Option<u8> {
 fn try_load_rom(file_name_option: &Option<String>) -> EmulatorResult<(Vec<u8>, usize)> {
     let mut file_bytes = vec![0u8; MEM_LENGTH];
 
-    let bytes_read = if let Some(file_name) = file_name_option{
+    let bytes_read = if let Some(file_name) = file_name_option {
         let mut file_handle = File::open(file_name.as_str())?;
         file_handle.read(&mut file_bytes)?
-    }else{
+    } else {
         0
     };
 
@@ -126,12 +126,12 @@ fn initiate_sdl() -> (WindowCanvas, EventPump, AudioQueue<u8>) {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let audio_subsystem = sdl_context.audio().unwrap();
-    let wanted_spec = AudioSpecDesired{
+    let wanted_spec = AudioSpecDesired {
         channels: Some(1),
         samples: Some(256),
         freq: Some(15360),
     };
-    let audio_queue = audio_subsystem.open_queue::<u8,_>(None, &wanted_spec).unwrap();
+    let audio_queue = audio_subsystem.open_queue::<u8, _>(None, &wanted_spec).unwrap();
     audio_queue.resume();
 
 

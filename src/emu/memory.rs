@@ -1,4 +1,4 @@
-use std::cell::{Ref, RefCell, RefMut};
+use std::cell::{Ref, RefCell};
 
 use crate::misc::error::DeviceType::RAM;
 use crate::misc::error::EmulatorError;
@@ -53,10 +53,6 @@ impl RamMemory {
     pub fn get_data_ref(&self) -> Ref<Box<[u8; MEM_LENGTH]>> {
         self.data.borrow()
     }
-    pub fn get_data_ref_mut(&self) -> RefMut<Box<[u8; MEM_LENGTH]>> {
-        self.data.borrow_mut()
-    }
-
 }
 
 impl Memory for RamMemory {
