@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::Read;
 use std::time::Duration;
 use clap::Parser;
+use sdl2::audio::{AudioQueue, AudioSpecDesired};
 use sdl2::event::Event;
 use sdl2::EventPump;
 use sdl2::keyboard::Keycode;
@@ -9,6 +10,7 @@ use sdl2::pixels::Color;
 use sdl2::render::{BlendMode, WindowCanvas};
 use simple_logger::SimpleLogger;
 use crate::args::BytePusherArgs;
+use crate::emu::audio::AudioProcessor;
 use crate::emu::cpu::Cpu;
 use crate::emu::graphics::GraphicsProcessor;
 use crate::emu::keyboard::Keyboard;
@@ -30,11 +32,12 @@ fn main() -> EmulatorResult<()> {
     let (file_bytes, x) = try_load_rom(&file_name)?;
     assert!(x < MEM_LENGTH);
 
-    let (mut canvas, mut event_pump) = initiate_sdl();
+    let (mut canvas, mut event_pump, mut audio_queue) = initiate_sdl();
 
 
     let ram = RamMemory::try_from(file_bytes.as_slice())?;
     let graphics_processor = GraphicsProcessor::try_new(&ram)?;
+    let mut audio_processor = AudioProcessor::try_new(&ram,&audio_queue)?;
     let mut keyboard = Keyboard::new(&ram);
     let cpu = Cpu::new(&ram, &graphics_processor);
 
@@ -70,6 +73,7 @@ fn main() -> EmulatorResult<()> {
         // draw graphics
         sdl2_graphics_adapter.draw(&mut canvas)?;
         // TODO render audio
+        audio_processor.queue()?;
 
         canvas.present();
 
@@ -115,12 +119,22 @@ fn try_load_rom(file_name_option: &Option<String>) -> EmulatorResult<(Vec<u8>, u
     Ok((file_bytes, bytes_read))
 }
 
-fn initiate_sdl() -> (WindowCanvas, EventPump) {
+fn initiate_sdl() -> (WindowCanvas, EventPump, AudioQueue<u8>) {
     const BASE_RESOLUTION: u32 = 256;
     const DRAW_FACTOR: u32 = 4;
     const WINDOW_RESOLUTION: u32 = BASE_RESOLUTION * DRAW_FACTOR;
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
+    // TODO audio subsystem
+    let audio_subsystem = sdl_context.audio().unwrap();
+    let wanted_spec = AudioSpecDesired{
+        channels: Some(1),
+        samples: Some(256),
+        freq: Some(15360),
+    };
+    let audio_queue = audio_subsystem.open_queue::<u8,_>(None, &wanted_spec).unwrap();
+    audio_queue.resume();
+
 
     let window = video_subsystem.window("byte-pusher-emu", WINDOW_RESOLUTION, WINDOW_RESOLUTION)
         .position_centered()
@@ -136,5 +150,5 @@ fn initiate_sdl() -> (WindowCanvas, EventPump) {
     canvas.set_blend_mode(BlendMode::None);
     canvas.present();
     let event_pump = sdl_context.event_pump().unwrap();
-    (canvas, event_pump)
+    (canvas, event_pump, audio_queue)
 }

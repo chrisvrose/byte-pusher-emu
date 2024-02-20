@@ -15,6 +15,7 @@ pub enum EmulatorError {
     AllocationFailure(DeviceType, &'static str),
     UnreachableMemory(DeviceType, u32),
     EmulatorIOError(Error),
+    OtherError(Option<DeviceType>,String)
 }
 
 impl From<TryFromSliceError> for EmulatorError {

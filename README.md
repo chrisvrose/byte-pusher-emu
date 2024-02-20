@@ -14,10 +14,10 @@ Screenshot program author: [Javamannen](https://esolangs.org/wiki/User:Javamanne
   - [X] Outer loop - 60fps display loop
 - [X] Display adapter
   - [X] SDL2 adapter
-- [ ] Keyboard
-- [ ] Audio
+- [X] Keyboard
+- [X] Audio
 - [ ] Load/Save memory
-  - [ ] Load a ROM
+  - [X] Load a ROM
 
 ## Usage instructions
 
