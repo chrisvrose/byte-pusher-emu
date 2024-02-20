@@ -1,3 +1,4 @@
+use std::time::Duration;
 use sdl2::audio::AudioQueue;
 
 use crate::emu::memory::RamMemory;
@@ -35,7 +36,10 @@ impl<'a> AudioProcessor<'a> {
         let audio_base_reg = (self.get_audio_base_reg() as u32) << 8;
         let fb = self.frame_buffer.as_mut();
         if self.audio_queue.size() == 0 {
-            log::warn!("Detected Queue empty!");
+            log::trace!("Detected Queue empty!");
+        }
+        while self.audio_queue.size() > 10 {
+            ::std::thread::sleep(Duration::from_micros(1))
         }
         self.ram.try_copy_block(audio_base_reg, fb)?;
         self.audio_queue.queue_audio(fb).map_err(|s| { EmulatorError::OtherError(Some(AUDIO), s) })
