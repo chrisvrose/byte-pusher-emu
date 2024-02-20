@@ -1,6 +1,7 @@
 # BytePusher Emulator
 
 This is a play at emulating a BytePusher machine developed by [Javamannen](https://esolangs.org/wiki/User:Javamannen).
+Binary builds for linux x86_64 is available in GitHub Action runs.
 
 ![Screen test](assets/screen_test.png)
 Screenshot program author: [Javamannen](https://esolangs.org/wiki/User:Javamannen)
@@ -16,13 +17,22 @@ Screenshot program author: [Javamannen](https://esolangs.org/wiki/User:Javamanne
   - [X] SDL2 adapter
 - [X] Keyboard
 - [X] Audio
-- [ ] Load/Save memory
-  - [X] Load a ROM
+- [X] Load a ROM
 
 ## Usage instructions
 
-TBD
+For help on how to use, please refer
+```sh
+./byte-pusher-emu --help
+```
 
+To load a program, use the following command.
+
+```sh
+./byte-pusher-emu -f rom.BytePusher
+```
+
+Loads a rom from the file specified. If `-f` is not mentioned, the VM will run with an empty memory (which will cause it to cycle endlessly).
 
 ## More information about the BytePusher VM
 
