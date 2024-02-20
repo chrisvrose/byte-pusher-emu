@@ -125,7 +125,6 @@ fn initiate_sdl() -> (WindowCanvas, EventPump, AudioQueue<u8>) {
     const WINDOW_RESOLUTION: u32 = BASE_RESOLUTION * DRAW_FACTOR;
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
-    // TODO audio subsystem
     let audio_subsystem = sdl_context.audio().unwrap();
     let wanted_spec = AudioSpecDesired{
         channels: Some(1),
