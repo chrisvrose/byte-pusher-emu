@@ -38,10 +38,13 @@ impl<'a> AudioProcessor<'a> {
         if self.audio_queue.size() == 0 {
             log::trace!("Detected Queue empty!");
         }
-        while self.audio_queue.size() > 10 {
+        while self.audio_queue.size() > 32 {
             ::std::thread::sleep(Duration::from_micros(1))
         }
         self.ram.try_copy_block(audio_base_reg, fb)?;
+        fb.iter_mut().for_each(|item|{
+            *item^= 0x80;
+        });
         self.audio_queue.queue_audio(fb).map_err(|s| { EmulatorError::OtherError(Some(AUDIO), s) })
     }
     fn get_audio_base_reg(&self) -> u16 {

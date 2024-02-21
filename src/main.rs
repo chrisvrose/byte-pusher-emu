@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::Read;
 use std::time::Duration;
 use clap::Parser;
+use log::LevelFilter;
 use sdl2::audio::{AudioQueue, AudioSpecDesired};
 use sdl2::event::Event;
 use sdl2::EventPump;
