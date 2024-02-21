@@ -8,7 +8,10 @@ use crate::misc::error::EmulatorError;
 use crate::misc::result::EmulatorResult;
 
 pub const AUDIO_BUFFER_SIZE: usize = 256;
-
+const I8_SIGN_BYTE: u8 = 0x80;
+const AUDIO_REG_START: usize = 6;
+const AUDIO_REG_LEN: usize = 2;
+const AUDIO_REG_END: usize = AUDIO_REG_START + AUDIO_REG_LEN -1;
 
 pub struct AudioProcessor<'a> {
     ram: &'a RamMemory,
@@ -31,6 +34,7 @@ impl<'a> AudioProcessor<'a> {
     }
 }
 
+
 impl<'a> AudioProcessor<'a> {
     pub fn queue(&mut self) -> EmulatorResult<()> {
         let audio_base_reg = (self.get_audio_base_reg() as u32) << 8;
@@ -39,22 +43,22 @@ impl<'a> AudioProcessor<'a> {
         // The CPU frame timing is just a little less than 60 fps to prevent audio stutter.
         // We will then wait for audio to drain to adjust frame timing
         if self.audio_queue.size() == 0 {
-            log::trace!("Detected Queue empty!");
+            log::info!("Detected Queue empty! Audio stutter may occur");
         }
-        while self.audio_queue.size() > 32 {
+        while self.audio_queue.size() > (AUDIO_BUFFER_SIZE / 2) as u32 {
             ::std::thread::sleep(Duration::from_micros(1))
         }
         self.ram.try_copy_block(audio_base_reg, fb)?;
 
         //convert to u8 audio format (Bytepusher stores it as "i8")
         fb.iter_mut().for_each(|item|{
-            *item^= 0x80;
+            *item ^= I8_SIGN_BYTE;
         });
         self.audio_queue.queue_audio(fb).map_err(|s| { EmulatorError::OtherError(Some(AUDIO), s) })
     }
     fn get_audio_base_reg(&self) -> u16 {
         let data = self.ram.get_data_ref();
-        let audio_base_reg = data.get(6..8).unwrap();
+        let audio_base_reg = data.get(AUDIO_REG_START..=AUDIO_REG_END).unwrap();
         read_big_endian_u16(audio_base_reg.try_into().unwrap())
     }
 }

@@ -5,7 +5,8 @@ use crate::misc::error::DeviceType::GRAPHICS;
 use crate::misc::error::EmulatorError;
 use crate::misc::result::EmulatorResult;
 
-pub const DEVICE_FRAMEBUFFER_SIZE: usize = 256 * 256;
+pub const DEVICE_RESOLUTION: usize = 256;
+pub const DEVICE_FRAMEBUFFER_SIZE: usize = DEVICE_RESOLUTION * DEVICE_RESOLUTION;
 
 #[derive(Debug)]
 pub struct GraphicsProcessor<'a> {

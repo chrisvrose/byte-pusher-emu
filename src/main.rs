@@ -13,7 +13,7 @@ use simple_logger::SimpleLogger;
 use crate::args::BytePusherArgs;
 use crate::emu::audio::AudioProcessor;
 use crate::emu::cpu::Cpu;
-use crate::emu::graphics::GraphicsProcessor;
+use crate::emu::graphics::{DEVICE_RESOLUTION, GraphicsProcessor};
 use crate::emu::keyboard::Keyboard;
 use crate::emu::memory::{MEM_LENGTH, RamMemory};
 use crate::graphics::graphics_adapter::SDLGraphicsAdapter;
@@ -26,14 +26,13 @@ mod misc;
 mod graphics;
 
 fn main() -> EmulatorResult<()> {
-    let BytePusherArgs { file_name } = BytePusherArgs::parse();
-    SimpleLogger::new().with_level(LevelFilter::Info).env().init().unwrap();
+    let BytePusherArgs { file_name ,draw_scale} = BytePusherArgs::parse();
+    SimpleLogger::new().with_level(LevelFilter::Info).env().init()?;
 
 
-    let (file_bytes, x) = try_load_rom(&file_name)?;
-    assert!(x < MEM_LENGTH);
+    let (file_bytes, ..) = try_load_rom(&file_name)?;
 
-    let (mut canvas, mut event_pump, audio_queue) = initiate_sdl();
+    let (mut canvas, mut event_pump, audio_queue) = initiate_sdl(draw_scale);
 
 
     let ram = RamMemory::try_from(file_bytes.as_slice())?;
@@ -44,9 +43,9 @@ fn main() -> EmulatorResult<()> {
 
     let mut sdl2_graphics_adapter = SDLGraphicsAdapter::new(&graphics_processor);
 
+    canvas.set_draw_color(Color::BLACK);
+    canvas.clear();
     'running: loop {
-        canvas.set_draw_color(Color::BLACK);
-        canvas.clear();
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. } |
@@ -71,12 +70,11 @@ fn main() -> EmulatorResult<()> {
 
         // The rest of the game loop goes here...
         cpu.cycle()?;
-        // draw graphics
-        sdl2_graphics_adapter.draw(&mut canvas)?;
-        // TODO render audio
-        audio_processor.queue()?;
 
+        sdl2_graphics_adapter.draw(&mut canvas)?;
+        audio_processor.queue()?;
         canvas.present();
+
 
         // 60fps - small offset to consider for cpu cycle time
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60 - 2000_000));
@@ -121,10 +119,8 @@ fn try_load_rom(file_name_option: &Option<String>) -> EmulatorResult<(Vec<u8>, u
     Ok((file_bytes, bytes_read))
 }
 
-fn initiate_sdl() -> (WindowCanvas, EventPump, AudioQueue<u8>) {
-    const BASE_RESOLUTION: u32 = 256;
-    const DRAW_FACTOR: u32 = 4;
-    const WINDOW_RESOLUTION: u32 = BASE_RESOLUTION * DRAW_FACTOR;
+fn initiate_sdl(draw_scale:f32) -> (WindowCanvas, EventPump, AudioQueue<u8>) {
+    let window_resolution: u32 = (DEVICE_RESOLUTION as f32 * draw_scale) as u32;
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let audio_subsystem = sdl_context.audio().unwrap();
@@ -137,18 +133,16 @@ fn initiate_sdl() -> (WindowCanvas, EventPump, AudioQueue<u8>) {
     audio_queue.resume();
 
 
-    let window = video_subsystem.window("byte-pusher-emu", WINDOW_RESOLUTION, WINDOW_RESOLUTION)
+    let window = video_subsystem.window("byte-pusher-emu", window_resolution, window_resolution)
         .position_centered()
         .build()
         .unwrap();
     let mut canvas = window.into_canvas().build().unwrap();
 
-    canvas.set_draw_color(Color::RGB(0x10, 0x10, 0x10));
-    canvas.set_integer_scale(true).expect("Setting int scale");
+    canvas.set_scale(draw_scale, draw_scale).expect("Setting scale");
 
-    canvas.set_scale(DRAW_FACTOR as f32, DRAW_FACTOR as f32).expect("Setting scale");
-    canvas.clear();
     canvas.set_blend_mode(BlendMode::None);
+    canvas.clear();
     canvas.present();
     let event_pump = sdl_context.event_pump().unwrap();
     (canvas, event_pump, audio_queue)
