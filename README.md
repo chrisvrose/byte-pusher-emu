@@ -1,7 +1,10 @@
 # BytePusher Emulator
 
 This is a play at emulating a BytePusher machine developed by [Javamannen](https://esolangs.org/wiki/User:Javamannen).
+
 Binary builds for linux x86_64 is available in GitHub Action runs.
+
+This project uses SDL2 for i/o.
 
 ![Screen test](assets/screen_test.png)
 Screenshot program author: [Javamannen](https://esolangs.org/wiki/User:Javamannen)
@@ -11,12 +14,9 @@ Screenshot program author: [Javamannen](https://esolangs.org/wiki/User:Javamanne
 - [X] Memory
 - [X] Color
 - [X] CPU
-  - [X] Inner loop - 65536 instructions
-  - [X] Outer loop - 60fps display loop
-- [X] Display adapter
-  - [X] SDL2 adapter
-- [X] Keyboard
-- [X] Audio
+- [X] Display adapter - SDL2 
+- [X] Keyboard - SDL2
+- [X] Audio - SDL2
 - [X] Load a ROM
 
 ## Usage instructions
