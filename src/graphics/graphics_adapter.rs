@@ -21,7 +21,7 @@ impl<'a> Debug for SDLGraphicsAdapter<'a> {
 
 impl<'a> SDLGraphicsAdapter<'a> {
     pub fn new(graphics_processor: &'a GraphicsProcessor) -> SDLGraphicsAdapter<'a> {
-        let color_fb_vec = vec![0u8; DEVICE_FRAMEBUFFER_SIZE * 3].into_boxed_slice().try_into().expect("???");
+        let color_fb_vec = vec![0u8; DEVICE_FRAMEBUFFER_SIZE * 3].into_boxed_slice().try_into().expect("Failed conversion");
         SDLGraphicsAdapter {
             color_fb: color_fb_vec,
             graphics_processor,
@@ -37,8 +37,8 @@ impl<'a> SDLGraphicsAdapter<'a> {
         let mut texture = texture_creator.create_texture(PixelFormatEnum::RGB24, TextureAccess::Streaming, 256, 256).expect("Failed to make texture");
         texture.with_lock(None, |f, _i| {
             f.copy_from_slice(self.color_fb.as_ref())
-        }).expect("TODO: panic message");
-        canvas.copy(&texture, None, None).expect("Failed to write texture");
+        })?;
+        canvas.copy(&texture, None, None)?;
 
         Ok(())
     }

@@ -19,12 +19,12 @@ impl<'a> Keyboard<'a>{
 
     pub fn key_down(&mut self,x:u8){
         self.bitflags |= 1<<x;
-        log::debug!("Key Down, keyboard state {}",self.bitflags);
+        log::trace!("Key Down - state {}",self.bitflags);
         self.dirty = true
     }
     pub fn key_up(&mut self,x:u8){
         self.bitflags &= !((1<<x) as u16);
-        log::debug!("Key Up, keyboard state {}",self.bitflags);
+        log::debug!("Key Up - state {}",self.bitflags);
         self.dirty = true
     }
     pub fn flush_keyboard(&mut self)->EmulatorResult<()>{

@@ -36,6 +36,11 @@ impl From<SetLoggerError> for EmulatorError{
         EmulatorError::OtherError(None,format!("Logger allocation failed! Error: {}",value))
     }
 }
+impl From<String> for EmulatorError{
+    fn from(value: String) -> Self {
+        EmulatorError::OtherError(None,value)
+    }
+}
 
 
 

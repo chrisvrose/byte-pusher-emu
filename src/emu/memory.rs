@@ -53,6 +53,7 @@ impl RamMemory {
     pub fn get_data_ref(&self) -> Ref<Box<[u8; MEM_LENGTH]>> {
         self.data.borrow()
     }
+
 }
 
 impl Memory for RamMemory {

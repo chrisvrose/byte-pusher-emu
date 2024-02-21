@@ -29,7 +29,6 @@ fn main() -> EmulatorResult<()> {
     let BytePusherArgs { file_name ,draw_scale} = BytePusherArgs::parse();
     SimpleLogger::new().with_level(LevelFilter::Info).env().init()?;
 
-
     let (file_bytes, ..) = try_load_rom(&file_name)?;
 
     let (mut canvas, mut event_pump, audio_queue) = initiate_sdl(draw_scale);
