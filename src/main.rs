@@ -27,7 +27,7 @@ mod graphics;
 
 fn main() -> EmulatorResult<()> {
     let BytePusherArgs { file_name } = BytePusherArgs::parse();
-    SimpleLogger::new().env().init().unwrap();
+    SimpleLogger::new().with_level(LevelFilter::Info).env().init().unwrap();
 
 
     let (file_bytes, x) = try_load_rom(&file_name)?;
