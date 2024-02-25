@@ -6,7 +6,19 @@ Binary builds for linux x86_64 is available in GitHub Action runs.
 
 This project uses SDL2 for i/o.
 
+![Audio test](assets/audio_test.png)
+
+<details>
+<summary>More screenshots</summary>
+
+#### Palette Test
 ![Screen test](assets/screen_test.png)
+
+#### Keyboard test
+![Keyboard test](assets/kb_test.png)
+
+</details>
+
 Screenshot program author: [Javamannen](https://esolangs.org/wiki/User:Javamannen)
 
 ## Status
