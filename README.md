@@ -1,10 +1,9 @@
 # BytePusher Emulator
 
-This is a play at emulating a BytePusher machine developed by [Javamannen](https://esolangs.org/wiki/User:Javamannen).
+`byte-pusher-emu` is an emulator for the BytePusher virtual machine developed by [Javamannen](https://esolangs.org/wiki/User:Javamannen).
 
-Binary builds for linux x86_64 is available in GitHub Action runs.
+Binary builds for linux x86_64 is available in the Releases section.
 
-This project uses SDL2 for i/o.
 
 ![Audio test](assets/audio_test.png)
 
@@ -21,11 +20,13 @@ This project uses SDL2 for i/o.
 
 The roms showcased here have been created by [Javamannen](https://esolangs.org/wiki/User:Javamannen).
 
-
+Note: This is a project that was used to learn Rust and emulation basics. However, it should work good as a reference for running ROMs.
 
 ## Usage instructions
 
-For help on how to use, please refer
+`byte-pusher-emu` is rather minimalistic, and needs to be launched from CLI.
+
+For help on how to use, run the following:
 ```sh
 ./byte-pusher-emu --help
 ```
