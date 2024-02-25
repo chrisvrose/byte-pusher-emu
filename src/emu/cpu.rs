@@ -40,7 +40,6 @@ impl<'a> Cpu<'a> {
 
         log::trace!("Finished internal loop");
         self.graphics_processor.draw()?;
-        // TODO send audio
         Ok(())
     }
 

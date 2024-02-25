@@ -46,11 +46,11 @@ impl<'a> AudioProcessor<'a> {
             log::info!("Detected Queue empty! Audio stutter may occur");
         }
         while self.audio_queue.size() > (AUDIO_BUFFER_SIZE / 2) as u32 {
-            ::std::thread::sleep(Duration::from_micros(1))
+            std::thread::sleep(Duration::from_micros(1))
         }
         self.ram.try_copy_block(audio_base_reg, fb)?;
 
-        //convert to u8 audio format (Bytepusher stores it as "i8")
+        //convert to u8 audio format (BytePusher stores it as "i8")
         fb.iter_mut().for_each(|item|{
             *item ^= I8_SIGN_BYTE;
         });

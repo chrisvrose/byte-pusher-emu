@@ -76,7 +76,7 @@ fn main() -> EmulatorResult<()> {
 
 
         // 60fps - small offset to consider for cpu cycle time
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60 - 2000_000));
+        std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60 - 2000_000));
     }
 
     Ok(())
