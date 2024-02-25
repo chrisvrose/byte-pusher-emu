@@ -21,15 +21,7 @@ This project uses SDL2 for i/o.
 
 The roms showcased here have been created by [Javamannen](https://esolangs.org/wiki/User:Javamannen).
 
-## Status
 
-- [X] Memory
-- [X] Color
-- [X] CPU
-- [X] Display adapter - SDL2 
-- [X] Keyboard - SDL2
-- [X] Audio - SDL2
-- [X] Load a ROM
 
 ## Usage instructions
 
@@ -49,3 +41,13 @@ Loads a rom from the file specified. If `-f` is not mentioned, the VM will run w
 ## More information about the BytePusher VM
 
 https://esolangs.org/wiki/BytePusher
+
+## Development Status
+
+- [X] Memory
+- [X] Color
+- [X] CPU
+- [X] Display adapter - SDL2
+- [X] Keyboard - SDL2
+- [X] Audio - SDL2
+- [X] Load a ROM
