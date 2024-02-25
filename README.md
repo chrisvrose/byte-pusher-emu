@@ -19,7 +19,7 @@ This project uses SDL2 for i/o.
 
 </details>
 
-Screenshot program author: [Javamannen](https://esolangs.org/wiki/User:Javamannen)
+The roms showcased here have been created by [Javamannen](https://esolangs.org/wiki/User:Javamannen).
 
 ## Status
 
